@@ -1,0 +1,8 @@
+.safety-alert {
+  background-color: #f8d7da;
+  color: #721c24;
+  width: 100%;
+  text-align: center;
+  position: fixed;
+  margin-bottom: 20px;
+}
