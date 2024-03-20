@@ -12,10 +12,12 @@ import { ParkInfo } from '../Functionality/ParkInfo'; // Importing the functiona
 import '../../Style/parkInfo.css';
 import ParkVideos from './ParkVideos';
 import ParkRating from './ParkRating';
+import ReviewForm from './ReviewForm'
 
 function ParkInfoComponent() {
     const [parkJSON, setParks] = useState([]);
-    
+    const [reviews, setReviews] = useState([]);
+
     var url = new URL(window.location);
     var page = 0;
     page = url.searchParams.get("page");
@@ -26,8 +28,18 @@ function ParkInfoComponent() {
     if(pageDown<0)
         pageDown = 0;
 
-    const parkCode = url.searchParams.get("parkCode");
+    useEffect(() => {
+        // Whenever reviews change, update them in localStorage
+        window.localStorage.setItem('reviews', JSON.stringify(reviews));
+    }, [reviews]);
+
+    // Function to handle review submission
+    const handleReviewSubmit = (reviewData) => {
+        // Add the new review to the current list of reviews
+        setReviews(prevReviews => [...prevReviews, reviewData]);
+    };
     
+    const parkCode = url.searchParams.get("parkCode");
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -103,7 +115,7 @@ function ParkInfoComponent() {
                                     <br></br>
                                 </center>
                             </div>
-
+                
                             <br></br>
 
                             <center>
@@ -140,9 +152,19 @@ function ParkInfoComponent() {
                                 {park.activities?.map((activity) =>(<>
                                 <div className='activity'><p key={activity.id}>{activity.name}</p></div></>))}
                             </div>
-
                             
-                            
+                        {/*Review section for parks*/}
+                        <ReviewForm onReviewSubmit={handleReviewSubmit} />
+                        <div className="reviews-section">
+                            <h3>Reviews</h3>
+                            <div className="reviews-list">
+                                {reviews.map((review, index) => (
+                                    <div key={index} className="review">
+                                        <p>{review.review}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                         </div>
                         </>
                     ))}
